@@ -177,4 +177,6 @@
     d) Si, lo indica el código 200.
     e) Last-Modified: Sun, 19 Mar 2023 19:04:46 GMT
 12) En HTTP 1.0 El cliente se da cuenta de que ha recibido todo el objeto cuando el servidor cierra la conexión después de enviar la repuesta. En HTTP 1.1 en cambio se utiliza el encabezado "Content-Length" para indicar al cliente la longitud en bytes del objeto en la respuesta, permitiendo saber cuentos datos se esperan. El encabezado "Transfer-Encoding" con valor "chunked" divide la respuesta en trozos, y el cliente detecta el final de la respuesta cuándo recibe un trozo de tamaño 0.
-13) 
+13) ![[Pasted image 20250919180027.png]]
+![[Pasted image 20250919180220.png]]
+14) 
