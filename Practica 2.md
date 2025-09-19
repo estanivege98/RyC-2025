@@ -11,9 +11,10 @@
 - Es un modelo asimétrico 1 a N, M a N (donde M<N).
   Si damos un ejemplo de la vida real, el cliente podría buscar en google, a traves de si navegador, y el servidor de google le responde.
   Un ejemplo mas técnico es: 
-1) En curl, los parámetros sirven para lo siguiente:
+7) En curl, los parámetros sirven para lo siguiente:
 	1) '-l': Muestra el sitio web en modo lista.
 	2) '-H': Le envía un header diferente al servidor.
 	3) '-X': Especifica un comando request al servidor.
 	4) '-s': Modo silencioso, no muestra errores de comunicación entre el servidor y el cliente.
-2) 
+8) a) Realice un requerimiento (método GET) y recibí un HTML.
+   b) El atributo href 
