@@ -36,4 +36,19 @@
 7) En ambos casos, entre MUA-MSA si es posible enviar mas de un correo durante una misma conexión TCP. Entre MTA-MTA si se trata de destinatarios del mismo dominio se puede enviar en una misma conexión (aunque también podría haber conexiones distintas, verdaderamente depende si el MTA lo permite o como esta configurado). Si se trata de destinatarios de distintos dominios, siempre va haber distintas conexiones, porque son dominios separados y responden a distintos servidores. 
 8) Si, un MSA puede escuchar en un puerto TCP diferente a los convencionales. Hay que tener en cuenta que si se cambia el MSA hay que informar a todos los MUA del dominio que se cambio en el puerto del MSA y estos tendrían que configurar el puerto
 9) Es posible configurar un MTA para que escuche en un puerto TCP diferente al convencional. Pero hay que tener en cuenta que si se cambia el MTA se tendría que informar a todos los MTA de los otros dominios de dicho cambio, que a diferencia del cambio de puerto del MSA, es algo prácticamente imposible.
-10) 
+10)  a
+	1) i) ![[Pasted image 20251022201339.png]] ![[Pasted image 20251022201543.png]] 
+	 Corresponde a las capacidades y extensiones soportadas por el server de correo. STARTTLS: Indica que el server de mail es compatible con la encriptación TLS. CHUNKING: Esta extensión indica que el server de mail permite la transmisión eficiente y segura de mails en fragmentos mas pequeños.
+	 ii) Date: Wed, 22 Oct 2025 20:14:27 -0300
+	 To: alumnoimap@redes.unlp.edu.ar
+	From: redesycomunicaciones@redes.unlp.edu.ar
+	Subject: SMTP-Practica4
+	Message-Id: <20251022201427.009992@debian>
+	X-Mailer: swaks v20201014.0 jetmore.org/john/code/swaks/
+	MIME-Version: 1.0
+	Content-Type: multipart/mixed; boundary="----=MIME_BOUNDARY_000_9992"
+	iii) 20251022201427.009992@debian, lo asigna MUA pero si falta el MSA.
+	iv) El servidor es Postfix, usando la direccion "mail.redes.unlp.edu.ar" con la version Lihuen-4.01/GNU
+	v) ![[Pasted image 20251022203216.png]] 
+	2) **¿Por qué el contenido del mail no puede ser leído en la captura de tráfico?**: Porque el encriptado ya usó el comando STARTTLS para comenzar una comunicación encriptada usando TLS
+	3) 
