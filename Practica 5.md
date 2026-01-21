@@ -80,3 +80,27 @@ Es importante el MSS porque si este llega a ser demasiado grade, el paquete resu
 	2) ![[Pasted image 20260121162930.png]] 
 	3) En el puerto 5353 (abierto): no devuelve nada. La ausencia de mensajes suele ser "una buena noticia" en UDP, indicando que el paquete fue entregado a la pila de protocolos y no hubo errores de red inmediatos. En el puerto 40 (cerrado) se recibe un paquete ICMP de vuelta, el host destino nos está diciendo explícitamente: "recibí tu paquete, pero no tengo ninguna aplicación que sepa qué hacer con él"
 	4) ¿A que se debe?: si se ejecuta el comando 'ss -uln' se puede ver lo siguiente: ![[Pasted image 20260121163450.png]] el sistema está escuchando al puerto 5353, como hay un proceso esperando, el kernel entrega el datagrama y no genera error. Por otro lado, el puerto 40 no aparece en la lista; al llegar el datagrama el kernel busca en su tabla de sockets activos; al no encontrar coincidencia para el puerto 40, genera el mensaje de error ICMP Port Unreachable.
+12) ... 
+13) Dada la salida del comando 'ss'
+	1) Hay un total de 9 conexiones establecidas (estado ESTAB). 7 son externas (interfaz 163.10.5.222) y 2 locales (interfaz 127.0.0.1)
+	2) Hay 5 puertos en espera de conexiones (estado LISTEN): el TCP 22 (sshd), el TCP 80 (apache2), UDP 53 (named en la IP 163.10.5.222), TCP 25 (postfix) y UDP 53 (named en 127.0.0.1)
+	3) No. Las comunicaciones HTTPS (puerto 443) muestran direcciones IP de destino externas (como 64.233.163.120, 200.115.89.15, etc.), mientras que la IP local es 163.10.5.222. Esto indica que el cliente es local (x-www-browser) y los servidores están en Internet.
+	4) Si, hay una conexión establecida entre 127.0.0.1:41220 (cliente) y 127.0.0.1:22 (server). Ambas direcciones pertenecen a la misma maquina (interfaz de loopback), lo que indica que alguien abrió una sesión SSH hacia el propio equipo.
+	5) 
+
+| Proceso       | Rol      | Justifiación                                                                              |
+| ------------- | -------- | ----------------------------------------------------------------------------------------- |
+| sshd          | Servidor | Se encuentra en estado LISTEN (puerto 22) y tiene conexiones aceptadas.                   |
+| apache2       | Servidor | Se encuentra en estado LISTEN (puerto 80).                                                |
+| named         | Servidor | Se encuentra en estado LISTEN (puerto 53, servicio DNS).                                  |
+| postfix       | Servidor | Se encuentra en estado LISTEN (puerto 25, servicio SMTP).                                 |
+| x-www-browser | Cliente  | Inicia conexiones hacia puertos remotos 443 y 9500 desde puertos locales aleatorios.      |
+| ssh           | Cliente  | El proceso ssh (PID 1415) está conectado desde un puerto alto (41220) hacia el puerto 22. |
+	6) Iniciado por el host local: La conexión con el estado TIME-WAIT (hacia la IP 54.149.207.17:443). El host que envía el primer FIN y completa el cierre queda en este estado para asegurar que los paquetes rezagados se descarten.
+	Iniciado por el host remoto: La conexión con el estado CLOSE-WAIT (hacia la IP 200.115.89.30:443). Este estado significa que el host remoto ya envió un FIN y el host local recibió el aviso, pero aún no ha cerrado su lado de la sesión.
+	7) El proceso x-www-browser (PID 1079) ha enviado un paquete SYN a la dirección 43.232.2.2:9500 y está esperando el SYN-ACK para completar el saludo de tres vías
+14) .
+	1) **Segmentos que llegaron**: El segmento SYN enviado por el cliente llegó exitosamente al servidor. Lo sabemos porque el servidor ha pasado al estado SYN-RECV, lo que significa que recibió la solicitud de conexión del cliente. **Segmentos que se están perdiendo**: Se está perdiendo el segmento SYN-ACK enviado por el servidor hacia el cliente. **Evidencia**: El servidor está en SYN-RECV (esperando el ACK final del cliente), pero el cliente sigue en SYN-SENT. Si el cliente hubiera recibido el SYN-ACK del servidor, ya habría pasado al estado ESTABLISHED. Como el cliente sigue "atrapado" en SYN-SENT, significa que nunca recibió la respuesta del servidor.
+	2) La capa de transporte: se esta intentando conectar mediante TCP, esto lo confirma la etiqueta 'tcp' al inicio de las líneas de la salida del comando 'ss' y por el uso de los estados propios del TCP como SYN-SENT y SYN-RECV. Capa de aplicación: El puerto 110 esta reservado para el protocolo POP3, utilizado para la descarga de e-mails.
+	3) El segmento que se pierde en la red es el que envía el servidor como respuesta al cliente (el segundo paso del saludo de tres vías). Por lo tanto, los flags seteados en ese segmento perdido son: SYN (Synchronize): Para sincronizar sus propios números de secuencia con el cliente. ACK (Acknowledgment): Para confirmar la recepción del SYN inicial del cliente.
+15) 
