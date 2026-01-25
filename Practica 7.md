@@ -1,0 +1,10 @@
+1) Los servicios de la capa de red son los siguientes: 
+	1) Direccionamiento Logico: Asigna a cada dispositivo una dirección única y jerárquica (dirección IP). A diferencia de la dirección MAC (física), la IP permite saber en qué red se encuentra el host.
+	2) Enrutamiento (routing): Es la funcion más crítica, Consiste en determinar la mejor ruta que debe seguir un dato para llegar a su destino, basandose en tablas de entutamiento y protocolos (Header) con las direcciones IP de origen y destino, convirtiendolo en un paquete.
+	3) Fragmentación y Re ensamblaje: si un paquete es demasiado grande para un medio físico intermedio (MTU pequeño), la capa de red puede dividirlo en trozos mas pequeño y volver a juntarlos en el destino.
+   La PDU (Protocol Data Unit): La unidad de datos característica de esta capa es el paquete (Packet). En el contexto especifico del protocolo IP, a menudo se le denomina Datagrama IP. Cuando los datos bajan de la capa de transporte (segmentos) se "envuelven" en la capa de red con la información de direccionamiento necesaria, dando lugar al paquete.
+   Dispositivo de la capa de red: El dispositivo por excelencia es el enrutador (Router): 
+	4) ¿Por que?: Un router es capaz de leer las direcciones IP de los paquetes y tomar decisiones de envío basadas en su tabla de enrutamiento. A diferencia de un switch de capa 2 (que solo mira direcciones MAC), el router puede conectar redes de diferentes tecnologías y arquitecturas.
+	5) Dato importante: Aunque existen los "Switches de Capa 3", el router sigue siendo el dispositivo diseñado fundamentalmente para operar en esta capa y servir de frontera entre distintas redes.
+2) Se considera que IP (Internet Protocol) es un protocolo de "mejor esfuerzo" (Best-Effort) porque no garantiza que los datos lleguen a su destino, ni que lo hagan en el orden correcto o sin errores. Su única "promesa" es que el router hará lo mejor que pueda con los recursos que tiene en ese momento para reenviar el paquete.
+3) 
