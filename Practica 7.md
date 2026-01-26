@@ -42,3 +42,51 @@
 ¿A qué campos de la capa de transporte se asemeja?
 En cuanto a su funcionalidad, el campo Protocol de la capa de red es el equivalente directo a los Números de Puerto (Port Numbers) de la capa de transporte.
 6) 
+
+| IP / Mascara     | Clase | Subred        | Broadcast     | Max. Hosts |
+| ---------------- | ----- | ------------- | ------------- | ---------- |
+| 172.16.58.223/26 | B     | 172.16.58.192 | 172.16.58.255 | 62         |
+| 163.10.5.49/27   | B     | 163.10.5.32   | 163.10.5.63   | 30         |
+| 128.10.1.0/23    | B     | 128.10.0.0    | 128.10.1.255  | 510        |
+| 10.1.0.0/24      | A     | 10.1.0.0      | 10.1.0.255    | 245        |
+| 8.40.11.179/12   | A     | 8.32.0.0      | 8.47.255.255  | 1,048,574  |
+
+7) 
+	1) Es una dirección de host, porque al ser de clase B, su mascara por defecto es /16. Esto significa que los primeros dos octetos (128.50) son la red y los últimos dos (10.0) son el host. En binario es 10000000 00110010 00001010 00000000 y la mascara es 11111111 11111111 00000000 00000000
+	2) Clase B (su rango es de 128 a 191) y la mascara de clase es 255.255.0.0 (en CIDR: /16).
+	3) La cantidad de host posibles es 32 - 16 = 16bits --> 2^16 -2 = 65534 hosts
+	4) q
+		1) Mascara necesaria: 255.255.255.192
+		2) Cantidad de redes asignables: 1024
+		3) Cantidad de hosts por subred: 62
+		4) La subred 710 en binaria resia la 709 ya que se empieza a contar desde 0. 710 en binario es 10110001, por lo que la dirección para la subred seria: 100000000 00110010 10110001 01000000 (128.50.177.64)
+		5) 128.50.177.127
+8) a) Si uso la formula de 2^n >= subredes, donde n es la cantidad de bits que robaremos a los hosts
+	1) Si robamos 3 bits: 2^3 = 8 subredes, no alcanza necesitamos 9
+	2) Si robamos 4 bits: 2^4 = 16 subredes
+   Debemos tomar 4 bits
+   Para definir la nueva mascara, sabemos que la mascara original es /24, al sumar los 4 bits que tomamos prestados, la nueva mascarara es /28, 255.255.255.240 (el 240 viene de sumar los pesos de los 4 bits activamos en el ultimo octeto: 128 + 64 + 32 + 16 = 240)
+   b) 
+
+| Subred # | Direccion de Subred |
+| -------- | ------------------- |
+| 1        | 195.200.45.0        |
+| 2        | 195.200.45.16       |
+| 3        | 195.200.45.32       |
+| 4        | 195.200.45.48       |
+| 5        | 195.200.45.64       |
+| 6        | 195.200.45.80       |
+| 7        | 195.200.45.96       |
+| 8        | 195.200.45.112      |
+| 9        | 195.200.45.128      |
+c) 195.200.45.0
+Broadcast: 11111111 11111111 11111111 00001111 - 195.200.45.15
+Min: 11111111 11111111 11111111 0000001 - 195.200.45.1
+Max: 11111111 11111111 11111111 0001110 - 195.200.45.14
+
+10) CIDR es una estrategia para frenar algunos problemas que se habian comenzado a manifestar con el crecimiento de Internet. Algunos de estos son:
+	1) Agotamiento del espacio de direcciones de clase B.
+	2) Crecimiento de las tablas de enrutamiento mas alla de la capacidad del software y hardware disponibles
+	3) Eventual agotamiento de las direcciones IP en general.
+     CIDR consiste básicamente en permitir mascaras de subred de longitud variable (VLSM) para optimizar la asignación de direcciones IP y utilizar resumen de rutas para disminuir el tamaño de las tablas de enrutamiento.
+11) 
