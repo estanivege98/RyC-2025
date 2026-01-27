@@ -84,9 +84,60 @@ Broadcast: 11111111 11111111 11111111 00001111 - 195.200.45.15
 Min: 11111111 11111111 11111111 0000001 - 195.200.45.1
 Max: 11111111 11111111 11111111 0001110 - 195.200.45.14
 
-10) CIDR es una estrategia para frenar algunos problemas que se habian comenzado a manifestar con el crecimiento de Internet. Algunos de estos son:
+10) CIDR (Classless Inter-Domain Routing) es el sistema que jubiló al antiguo modelo de "redes por clases" (A, B y C) a principios de los años 90. Fue la solución de emergencia para evitar que las direcciones IPv4 se agotaran prematuramente y que las tablas de enrutamiento de Internet colapsaran por el exceso de información.
+    En lugar de tener tamaños de red fijos y rígidos, CIDR permite usar máscaras de longitud variable (VLSM).CIDR es una estrategia para frenar algunos problemas que se habian comenzado a manifestar con el crecimiento de Internet. Algunos de estos son:
 	1) Agotamiento del espacio de direcciones de clase B.
 	2) Crecimiento de las tablas de enrutamiento mas alla de la capacidad del software y hardware disponibles
 	3) Eventual agotamiento de las direcciones IP en general.
      CIDR consiste básicamente en permitir mascaras de subred de longitud variable (VLSM) para optimizar la asignación de direcciones IP y utilizar resumen de rutas para disminuir el tamaño de las tablas de enrutamiento.
-11) 
+ Este sistema resulta util porque no solo es "mas ordenado", es vital para la supervivencia de la red por dos razones:
+ - Eficiencia en la asignacion de IPs: Elimina el desperdicio masivo. Permite a los proveedores de Internet (ISPs) parcelar sus bloques de direcciones de forma quirúrgica, entregando a cada cliente exactamente lo que necesita.
+ - Agregación de rutas (supernetting): CIDR permite que un router anuncie una sola ruta resumen (ej: 192.10.0.0/22) en lugar de cuatro rutas individuales (/24).
+	 - Menos memoria: Los routers de los "backbones" de Internet no tienen que memorizar miles de millones de rutas.
+	 - Menos tráfico de control: Si una pequeña red dentro del bloque falla, el resto del mundo no necesita enterarse, porque la ruta resumida sigue siendo válida.
+11) Análisis Binario:
+     - a. 198.10.0.0: 198.10. 000000 00 .0
+     - b. 198.10.1.0: 198.10. 000000 01 .0
+     - c. 198.10.2.0: 198.10. 000000 10 .0
+     - d. 198.10.3.0: 198.10. 000000 11 .0
+    Bits Comunes:
+	1) Primer octeto: 8 Bits
+	2) Segundo octeto: 8 Bits
+	3) Tercer octeto: 6 Bits comunes
+	4) Total: 8 + 8 + 6 = 22
+	Resultado: 198.10.0.0/22
+12) Bloque: 200.56.168.0/21
+	- Es un red de Clase C, con mascara /24
+	- Cantidad de redes: 2^3 = 8 redes
+	- Las redes involucradas van desde 200.56.168.0/24 hasta 200.56.175.0/24
+	Bloque: 195.24.0.0/13:
+	- Red de Clase B, con mascara /16
+	- Cantidad de redes: 2^3 = 8 redes tipo C
+	- Las redes involucradas van desde 195.24.0.0/16 hasta 195.31.0.0/16
+    Bloque: 195.24/13:
+    - Abreviado del anterior -> en el estándar CIDR es común omitir los octetos que son todos ceros al final.
+    - Significado: 195.24/13 es exactamente lo mismo que 195.24.0.0/13
+    - Las redes involucradas son las mismas que en el bloque anterior.
+13) En CIDR si, es equivalente a listar todas las direcciones de clase B.
+	- Para demostrarlo, se debe mirar los bits mas significativos:
+		- Históricamente, se definió que toda la dirección de clase B debe comenzar obligatoriamente con los bits binarios 10.
+		- El numero 128 en binario es 10000000
+		- La mascara /12 le dice al router: "Solo me importan los primeros 2 bits, el resto puede ser lo que sea".
+		- Esos dos primeros bits son 10
+	Por lo tanto, abarca absolutamente todas las direcciones que comienzan con 10, lo cual  es exactamente el rango que va desde 128.0.0.0 hasta 191.255.255.255 (todas las direcciones de la clase B).
+	Por otro lado, siguiendo la misma logica binaria, podemos agrupar toda la clase A en un unico bloque:
+	- Regla de la clase A: el primer bit debe ser 0
+	- Rango: va desde 0.0.0.0 hasta 127.255.255.255
+	- Bloque CIDR: para fijar solo el primer bit como 0, necesitamos una mascara de 1 bit.
+	- Bloque clase A: 0.0.0.0/1 (o simplemente 0/1)
+	Esto representa la primera mitad exacta de todo el universo de direcciones IPv4.
+14) VLSM (Variable Length Subnet Masking) es la evolución técnica del subnetting tradicional. si el subnetting es dividir una red en partes iguales, VLSM la divide en tamaños diferentes según la necesidad real de cada segmento.
+    Para aplicar VLSM correctamente, siempre se debe seguir una jerarquía de necesidades. No se puede dividir al azar; se debe empezar por la subred que requiere la mayor cantidad de hosts y terminar con la mas pequeña.
+15) Si el subnetting, es cortar como cortar una pizza en 8 porciones iguales, el VLSM es como cortarla según el hambre de cada comensal: a uno le das media pizza, a otro dos porciones y al ultimo solo una puntita.
+    El mecanismo para hacerlo y no morir en el intento es el siguiente:
+	1) El inventario (¿Quien necesita que?): Lo primero es hacer una lista de todas las redes que necesitás y cuántos hosts (dispositivos) va a tener cada una.
+	2) La Regla de Oro: Ordenar de Mayor a Menor Este es el paso donde la mayoría se equivoca. Siempre tenés que empezar a asignar direcciones a la subred que necesite más hosts. Si empezás por la red más chica, vas a "fragmentar" el bloque de IPs y después no te van a quedar espacios contiguos lo suficientemente grandes para las redes grandes.
+	3) Encontrar la "Horma" (La Máscara ideal)Para la red más grande de tu lista, buscás la máscara que mejor le quede.Si necesitás 50 hosts, buscás la potencia de 2 que lo cubra: $2^6 = 64$.Como $64 - 2$ (red y broadcast) es $62$, esa máscara te sirve perfectamente.Esa máscara sería una /26 (porque $32 - 6 = 26$).
+	4) Asignar y "Cortar" Tomas tu bloque de IP original y le asignás ese primer pedazo. Ejemplo: Si empezás en la .0, y tu bloque es de 64, esa subred va de la .0 a la .63.
+	5) Repetir con el "Sobrante" Ahora mirás cuál es la siguiente red más grande en tu lista. Su dirección de subred va a ser la que sigue inmediatamente después de donde terminó la anterior. En el ejemplo anterior, la siguiente red empezaría en la .64. Volvés al Paso 3 para calcular su máscara y seguís así hasta terminar con los enlaces de los routers (que suelen ser los últimos por ser los más chiquitos, de máscara /30).
+16) 
