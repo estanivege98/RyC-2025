@@ -140,4 +140,38 @@ Max: 11111111 11111111 11111111 0001110 - 195.200.45.14
 	3) Encontrar la "Horma" (La Máscara ideal)Para la red más grande de tu lista, buscás la máscara que mejor le quede.Si necesitás 50 hosts, buscás la potencia de 2 que lo cubra: $2^6 = 64$.Como $64 - 2$ (red y broadcast) es $62$, esa máscara te sirve perfectamente.Esa máscara sería una /26 (porque $32 - 6 = 26$).
 	4) Asignar y "Cortar" Tomas tu bloque de IP original y le asignás ese primer pedazo. Ejemplo: Si empezás en la .0, y tu bloque es de 64, esa subred va de la .0 a la .63.
 	5) Repetir con el "Sobrante" Ahora mirás cuál es la siguiente red más grande en tu lista. Su dirección de subred va a ser la que sigue inmediatamente después de donde terminó la anterior. En el ejemplo anterior, la siguiente red empezaría en la .64. Volvés al Paso 3 para calcular su máscara y seguís así hasta terminar con los enlaces de los routers (que suelen ser los últimos por ser los más chiquitos, de máscara /30).
-16) 
+16) Análisis Inicial
+    - Red Base: $205.10.192.0/19$ 
+    - Capacidad: $2^{13} = 8192$ direcciones.
+    - Rango: Desde $205.10.192.0$ hasta $205.10.223.255$
+    - Subredes requeridas: 4 LANs y 2 enlaces WAN (según el gráfico de la página 3).
+    - Dirección en binario: 11001101.00001010.110 | 00000.00000000
+    - Máscara /19: 11111111.11111111.111 | 00000.00000000 ($255.255.224.0$)
+    1) No, no es posible realizarlo sin VLSM para la red C de 1530 hosts, necesitaríamos 11 bits para la parte de hosts, lo cual requeriría una nueva mascara (/21).
+    2) Ordenamos de mayor a menor
+	    1) Red C (1530 Hosts):
+		    1) Necesidad: 1530 hosts $\rightarrow$ 11 bits ($2^{11} = 2048$). Se desperdician 516
+		    2) 11001101 00001010 11000000 00000000
+		    3) 11111111 11111111 11100000 00000000 Mascara de red
+		    4) 11111111 11111111 11110000 00000000 Mascara de Subred
+		2) Red A (128 Host)
+			1) Necesidad: 128 hosts $\rightarrow$ Con 7 bits ($2^{7} = 128$ -2) Solo tenemos 126 usables. Necesitamos ($2^{8} = 256$). Se desperdician 126
+			2) 11001101 00001010 11001000 00000000
+			3) 11111111 11111111 11111000 00000000 Mascara de subred
+			4) 11111111 11111111 11111111 00000000 Nueva mascara de subred
+		3) Red B (20 Host)
+			1) Necesidad: 20 Hosts $\rightarrow$ Con 5 bits ($2^{5} = 32$). Se desperdician 10
+			2) 11001101 00001010 11001000 00000000
+			3) 11111111 11111111 11111111 00000000 Mascara de subred
+			4) 11111111 11111111 11111111 11100000 Nueva mascara de subred
+		4) Red D (7 Hosts)
+			1) Necesidad: 7 Hosts $\rightarrow$ Con 4 bits ($2^{4} = 16$)
+			2) 11001101 00001010 11001000 0000000
+			3) 11111111 11111111 11111111 11100000 Mascara de red
+			4) 11111111 11111111 11111111 11110000 Nueva mascara de red
+		5) Red E (punto a punto, 4 hosts en total)
+			1) Necesidad: 2 C/U $\rightarrow$ Con 2 bits (2^2 = 4) No se desperdicia nada
+			2) 11001101 00001010 11001010 00110000
+			3) 11111111 11111111 11111111 11110000 Mascara de red
+			4) 11111111 11111111 11111111 11111100 Nueva mascara de red
+	3) 
