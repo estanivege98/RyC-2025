@@ -193,5 +193,59 @@ Max: 11111111 11111111 11111111 0001110 - 195.200.45.14
 	- 205.10.204.0/22 (Cubre hasta .207.255)
 	- 205.10.208.0/20 (Cubre hasta .223.255)
 		4) ![[Pasted image 20260128210538.png]] d)
+2) 17) Analisis Inicial:
 
-2) 17) 
+| Red   | Hosts Necesarios  | Calculo Binario (2^n -2) | Mascara |
+| ----- | ----------------- | ------------------------ | ------- |
+| Red A | 125 + 20 +2 = 147 | 2^8 - 2= 254             | /24     |
+| Red X | 63                | 2^7 -2 = 126             | /25     |
+| Red Y | 60 + 18 = 64      | 2^7 -2 = 126             | /25     |
+| Red B | 60                | 2^6 -2 = 62              | /26     |
+| WANs  | 2 C/U             | 2^2 -2 = 2               | /30     |
+a) Partiendo de la base de 11001000.01100100.000010 | 00.00000000 (200.100.8.0/22) ->
+11001000 01100100 00001000 00000000
+11111111 11111111 11111100 00000000 Mascara de Red
+11111111 11111111 11111111 00000000 Mascara de subred
+Quedan un rango usable desde 200.100.8.1 hasta 200.100.8.254
+Su Broadcast es 200.100.8.255
+b) Dado que la Red X necesita 63 hosts y la Red Y 64, se necesitan 7 bits que generan 128 hosts
+11001000 01100100 00001001 00000000
+11111111 11111111 11111111 00000000 Mascara de subred
+11111111 11111111 11111111 10000000 Nueva mascara de subred
+Queda un rango usable desde 200.100.9.1 - 200.100.9.126 (Red X); 200.100.9.129 - 200.100.9.254 (Red Y)
+Broadcast es de 200.100.9.127 (Red X); 200.100.9.255 (Red Y)
+c) Dado que la Red B necesita 60 hosts, se necesitan 6 bits que generarian 64 hosts
+11001000 01100100 00001010 00000000
+11111111 11111111 11111111 00000000 Mascara de subred
+11111111 11111111 11111111 11000000 Nueva mascara de subred
+Queda un rango usable desde 200.100.10.0 - 200.100.10.62.
+Broadcast es de 200.100.10.63
+d) Quedan 4 bits para el uso de las WAN
+
+| Enlace | Direccion de Red | Rango Usable    | Broadcast |
+| ------ | ---------------- | --------------- | --------- |
+| Wan1   | 200.100.10.64/30 | .10.65 - .10.66 | .10.67    |
+| Wan2   | 200.100.10.68/30 | .10.69 - .10.70 | .10.71    |
+| Wan3   | 200.100.10.72/30 | .10.73 - .10.74 | .10.75    |
+| Wan4   | 200.100.10.76/30 | .10.77 - 10.78  | .10.79    |
+| Wan5   | 200.100.10.80/30 | .10.81 - 10.82  | .10.83    |
+18) -
+19) El ICMP (Internet Control Message Protocol) es un protocolo fundamental de la capa de red. A diferencia de IP (que se encarga de mover datos de un punto a otro), ICMP no se usa para transportar datos de usuario, sino para:
+	- Notificar errores: informar si un destino es inalcanzable o si un paquete ha expirado (TTL igual a 0)
+	- Proporcionar información operativa: ayuda a los admins a diagnosticar problemas de conectividad y congestion en la red
+	- Controlar el flojo: permite que los dispositivos de red envíen mensajes de gestión entre si
+	 a) Funcionamiento del comando PING: este es la herramienta de diagnostico mas común que utiliza ICMP. Su funcionamiento sigue un ciclo de consulta y respuesta:
+	 1) Solicitud: La PC de origen encapsula un mensaje ICMP en un paquete IP y lo envía a la dirección de destino
+	 2) Procesamiento: si el destino esta activo y no hay bloqueos (como firewalls), este procesa el paquete
+	 3) Respuesta: el destino genera un nuevo paquete ICMP de respuesta y lo envía de vuelta al origen
+	 4) Medición: el origen calcula el RTT (Round Trip Time), que es el tiempo total que tardo el paquete en ir y volver
+	 Tipos y códigos ICMP en ping: los mensaje ICMP se identifican mediante dos valores: el tipo (categoria del mensaje) y el codigo (el detalle especifico dentro de esa categoria)
+	 
+
+| Accion           | Mensaje ICMP | Tipo | Codigo |
+| ---------------- | ------------ | ---- | ------ |
+| Solicitud (Ping) | Echo Request | 8    | 0      |
+| Respuesta (Pong) | Echo Reply   | 0    | 0      |
+b) El comando traceroute (tracert en Windows) es una de las herramientas mas ingeniosas de este tipo, ya que utiliza un campo diseñado para evitar errores (el TTL) y lo "hackea" para mapear una ruta.
+Rol del campo TTL: Originalmente, el TTL de la cabecera IP no es un cronómetro, sino un contador de saltos. Su función es evitar que un paquete circule infinitamente por la red si hay un bucle de ruteo. Cada vez que un paquete atraviesa un router, este le resta 1 al valor del TTL. Si el TTL llega a 0, el router descarta el paquete y envía un mensaje a origen avisando del problema.
+Mecanismo de Traceroute (paso a paso): Traceroute aprovecha este comportamiento enviando una serie de paquetes de forma iterativa
