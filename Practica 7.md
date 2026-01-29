@@ -249,3 +249,8 @@ d) Quedan 4 bits para el uso de las WAN
 b) El comando traceroute (tracert en Windows) es una de las herramientas mas ingeniosas de este tipo, ya que utiliza un campo diseñado para evitar errores (el TTL) y lo "hackea" para mapear una ruta.
 Rol del campo TTL: Originalmente, el TTL de la cabecera IP no es un cronómetro, sino un contador de saltos. Su función es evitar que un paquete circule infinitamente por la red si hay un bucle de ruteo. Cada vez que un paquete atraviesa un router, este le resta 1 al valor del TTL. Si el TTL llega a 0, el router descarta el paquete y envía un mensaje a origen avisando del problema.
 Mecanismo de Traceroute (paso a paso): Traceroute aprovecha este comportamiento enviando una serie de paquetes de forma iterativa
+20) El bloque de Loopback 127.0.0.0/8 esta reservado para que un host pueda comunicarse con si mismo. Se usa principalmente para probar si el "stack" de protocolos (el software de red) esta bien instalado. En ambos casos (a. 127.0.0.1 y b. 127.0.54.43), responde a tu propia computadora. Aunque solemos usar la .1, cualquier dirección dentro del rango $127.0.0.0$ a $127.255.255.255$ apunta al localhost.
+21) ifconfig: Sirve para ver y configurar interfaces (IP, máscara, encender/apagar).
+	- Reemplazo moderno: ip address (o ip a).
+    route: Sirve para ver y modificar la tabla de ruteo del sistema.
+    - Reemplazo moderno: ip route (o ip r).
