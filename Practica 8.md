@@ -41,3 +41,31 @@ e) Lo vuelve a fragmentar.
 		1) Consumo de recursos: Los protocolos consumen memoria RAM, ciclos de CPU y ancho de banda del enlace para enviar sus "actualizaciones" o "saludos" (hellos).
 		2) Complejidad: Requiere conocimientos más avanzados para configurar correctamente el protocolo y evitar problemas como bucles de ruteo (routing loops).
 		3) Seguridad: Es más vulnerable si no se utiliza autenticación, ya que un router extraño podría unirse a la red e inyectar rutas incorrectas para desviar el tráfico.
+4) Una maquina conectada, inclusive si no esta conectada a la internet, tiene una tabla de ruteo para gestionar la comunicación con la red local. La tabla de enrutamiento tiene informacion sobre  las rutas disponibles en la red y como alcanzar otras maquinas dentro de esa red.
+5) a)
+
+| Red Destino   | Mask | Next-Hop  | Iface |
+| ------------- | ---- | --------- | ----- |
+| 153.10.20.128 | /27  | -         | eth1  |
+| 10.0.0.4      | /30  | -         | eth0  |
+| 10.0.0.0      | /30  | -         | eth0  |
+| 10.0.0.8      | /30  | -         | eth3  |
+| 10.0.0.12     | /30  | 10.0.0.5  | eth0  |
+| 10.0.0.16     | /30  | 10.0.0.10 | eth3  |
+| 205.10.0.128  | /25  | 10.0.0.1  | eth5  |
+| 205.20.0.192  | /26  | 10.0.0.5  | eth0  |
+| 205.20.0.128  | /26  | 10.0.0.5  | eth0  |
+| 163.10.5.64   | /27  | 10.0.0.10 | eth3  |
+b) No, no tiene Internet porque la tabla de roteo no tien ninguna entrada que conecte con un ISP. Esto se puede solucionar con una default gateway que conecte con un ISP a traves de RTC-C
+c) Entraría en loop hasta que finalice el TTL y se descarte el paquete
+d) No, en el estado actual no se puede realizar la sumarizacion porque 10.0.0.4 y 10.0.0.8 no tienen la misma interfaz
+e) No se podría aplicar ya que son redes que están directamente conectadas con interfaces distintas
+f) 
+
+| Red Destino  | Mask | Next-Hop | IFace |
+| ------------ | ---- | -------- | ----- |
+| 205.20.0.192 | /26  | -        | eth0  |
+| 205.20.0.128 | /26  | .        | eth2  |
+| 10.0.0.4     | /30  | -        | eth1  |
+| 10.0.0.12    | /30  | -        | eth3  |
+|              |      |          |       |
