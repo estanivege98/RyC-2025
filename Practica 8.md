@@ -62,10 +62,26 @@ d) No, en el estado actual no se puede realizar la sumarizacion porque 10.0.0.4 
 e) No se podría aplicar ya que son redes que están directamente conectadas con interfaces distintas
 f) 
 
-| Red Destino  | Mask | Next-Hop | IFace |
-| ------------ | ---- | -------- | ----- |
-| 205.20.0.192 | /26  | -        | eth0  |
-| 205.20.0.128 | /26  | .        | eth2  |
-| 10.0.0.4     | /30  | -        | eth1  |
-| 10.0.0.12    | /30  | -        | eth3  |
-|              |      |          |       |
+| Red Destino   | Mask | Next-Hop  | IFace |
+| ------------- | ---- | --------- | ----- |
+| 205.20.0.192  | /26  | -         | eth0  |
+| 205.20.0.128  | /26  | .         | eth2  |
+| 10.0.0.4      | /30  | -         | eth1  |
+| 10.0.0.12     | /30  | -         | eth3  |
+| 10.0.0.0      | /30  | 10.0.0.13 | eth3  |
+| 10.0.0.8      | /30  | 10.0.0.6  | eth1  |
+| 10.0.0.16     | /30  | 10.0.0.13 | eth3  |
+| 0.0.0.0       | /0   | 10.0.0.13 | eth3  |
+| 153.10.20.128 | /27  | 10.0.0.6  | eth1  |
+| 205.10.0.128  | /25  | 10.0.0.10 | eth3  |
+| 163.10.5.54   | /27  | 10.0.0.6  | eth1  |
+| 120.0.0.0     | /30  | 10.0.0.13 | eth3  |
+| 130.0.10.0    | /30  | 10.0.0.13 | eth3  |
+g) Se podria reestablecer el acceso a internet si los routers tienen en su tablaa de ruteo la red ISP-1, es decir, a la red destino 120.0.0.0/30 para la cual se debe pasar por el router A.
+6)  a) router2 -> router1 -> router3 -> PC-C. router2 no conoce 10.0.7.0, usa default -> router1; router 1 si conoce 10.0.3.0 -> router3; router3 tiene a 10.0.7.0 ocnectada; El mensaje lleja dando 3 saltos, la respuesta es ICMP Echo Reply
+	b) router3 -> router4 -> router2 -> PC-B. router3 usa default -> router4; router4 conoce 10.0.5.0; router2 tiene red directa con PC-B. El mensaje llega dando 3 saltos, con mensaje ICMP Echo Reply.
+	c) Hay un loop de ruteo -> ningun router conoce a 8.8.8.8, todos usan default route, el paquete gira en ciclo entre routers y el TTL se agota. El resultado no llega y el emisor recibe ICMP Time Exceeded
+	d) Pasa lo mismo que lo anterior
+7) .
+8) NAT es un proceso que permite traducir direcciones IP de un espacio de direccionamiento a otro. Principalmente, se utiliza para mapear IP privadas (no enrutables en internet) a una IP publica (enrutable).
+   Esto sirve para el ahorro de direcciones IPv4, siendo una solución "parche" exitosa ante el agotamiento de direcciones de 32 bits. Ademas da seguridad al ocultar las IPs reales de los hosts internos, actúa como barrera básica, ya que desde afuera no se puede iniciar una conexión directa hacia un host privado si no hay mapeo previo. Por ultimo, da flexibilidad cambiando de ISP sin tener que reconfigurar las IPs de todos los dispositivos de la red interna.
