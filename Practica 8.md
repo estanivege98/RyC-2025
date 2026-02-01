@@ -83,5 +83,105 @@ g) Se podria reestablecer el acceso a internet si los routers tienen en su tabla
 	c) Hay un loop de ruteo -> ningun router conoce a 8.8.8.8, todos usan default route, el paquete gira en ciclo entre routers y el TTL se agota. El resultado no llega y el emisor recibe ICMP Time Exceeded
 	d) Pasa lo mismo que lo anterior
 7) .
+	1) (Captura iniciada en Wireshark)
+	2) ![[Pasted image 20260201121659.png]] 
+	3) ![[Pasted image 20260201121756.png]] El archivo de dhclient.leases mantiene una base de datos persistentes de asignaciones de direcciones IP que fueron adquiridos y que siguen siendo validos. La base de datos es un archivo ASCII que contiene una declaración valida por declaración. Si mas de una declaración aparece para cada uno, se utiliza el ultimo que se encuentra en el archivo. Este archivo se escribe como un log. 
+ 
+	4) ![[Pasted image 20260201122711.png]] 
+	5) ![[Pasted image 20260201122816.png]] En el inciso 8b el cliente DHCP utiliza la información almacenada en dhclient.leases para renovar una concesión previa, por lo que no se observa el proceso completo de descubrimiento. En cambio, en el inciso 8e, al eliminar dicho archivo, el cliente no posee información previa y debe iniciar el proceso completo de DHCP (Discover, Offer, Request, ACK), lo que explica la diferencia en los paquetes observados en Wireshark.
+	6) En ambos casos, el servidor DHCP le entrega, mediante las DHCP Options, al menos la siguiente informacion:
+		 - **Máscara de subred** (`Subnet Mask – Option 1`)
+        - **Gateway por defecto** (`Router – Option 3`)
+        - **Servidor(es) DNS** (`Domain Name Server – Option 6`)
+        - **Tiempo de concesión (lease time)** (`Option 51`)
+        - **Tiempo de renovación (T1)** (`Option 58`)
+	    - **Tiempo de rebinding (T2)** (`Option 59`)
+	    - **Dirección del servidor DHCP** (`Server Identifier – Option 54`)
+	    - (A veces) **nombre de dominio** (`Option 15`)
+	    Todo esto se puede ver en el DHCPack en Wireshark.
 8) NAT es un proceso que permite traducir direcciones IP de un espacio de direccionamiento a otro. Principalmente, se utiliza para mapear IP privadas (no enrutables en internet) a una IP publica (enrutable).
    Esto sirve para el ahorro de direcciones IPv4, siendo una solución "parche" exitosa ante el agotamiento de direcciones de 32 bits. Ademas da seguridad al ocultar las IPs reales de los hosts internos, actúa como barrera básica, ya que desde afuera no se puede iniciar una conexión directa hacia un host privado si no hay mapeo previo. Por ultimo, da flexibilidad cambiando de ISP sin tener que reconfigurar las IPs de todos los dispositivos de la red interna.
+9) La normativa RFC 1918 reserva tres bloques de direcciones IPv4 para ser utilizados exclusivamente dentro de redes privadas. Lo mas importante es que estas direcciones son no enrutables en la internet publica. Esto significa que los routers de los proveedores de servicios (ISPs) descartan cualquier paquete que provenga de o vaya hacia una de estas direcciones fuera de su red local.
+   Estas tres son:
+
+| Rango                         | Mascara de Red (CIDR) | Descripcion                          |
+| ----------------------------- | --------------------- | ------------------------------------ |
+| 10.0.0.0 – 10.255.255.255     | 10.0.0.0/8            | Grandes empresas y corporaciones     |
+| 172.16.0.0 – 172.31.255.255   | 172.16.0.0/12         | Redes de tamaño mediano              |
+| 192.168.0.0 – 192.168.255.255 | 192.168.0.0/16        | Redes domesticas y pequeñas oficinas |
+La relación con NAT es dependencia mutua. Dado que hay miles de millones de dispositivos pero solo unos 4300 millones de direcciones IPv4, no todos pueden tener una dirección publica única. La solucion conjunta
+- Ahorro de direcciones: miles de dispositivos pueden usar la misma dirección en diferentes redes privadas alrededor del mundo sin conflictos.
+- Traducción (NAT): Cuando un dispositivo con una IP privada (RFC 1918) quiere salir a Internet, el router utiliza NAT para cambiar esa dirección privada por la única dirección IP pública que te asignó tu ISP.
+- Seguridad Básica: Al no ser enrutables, las direcciones RFC 1918 están "escondidas" del mundo exterior. Un atacante en Internet no puede enviar un paquete directamente a tu IP 10.0.0.5 porque esa dirección no existe en el mapa global de la red
+10) Si usamos ipconfig (en Windows) salen las Ip Privadas, mientra en el sitio www.cualesmiip.com sale la IPv4 publica.
+11) ![[Pasted image 20260201125034.png]]
+	1) `PC-A (ss)`
+	`Local Address:Port Peer Address:Port`
+	`192.168.1.2:49273 190.50.10.63:80 `
+	`192.168.1.2:37484 190.50.10.63:25`
+	`192.168.1.2:51238 190.50.10.81:8080`
+	`PC-B (ss)`
+	`Local Address:Port Peer Address:Port`
+	`192.168.1.3:52734 190.50.10.81:8081`
+	`192.168.1.3:39275 190.50.10.81:8080`
+	`RTR-1 (Tabla de NAT)`
+	`Lado LAN Lado WAN`
+	`192.168.1.2:49273 205.20.0.29:25192`
+	`192.168.1.2:51238 205.20.0.29:16345`
+	`192.168.1.3:52734 205.20.0.29:51091`
+	`192.168.1.2:37484 205.20.0.29:41823`
+	`192.168.1.3:39275 205.20.0.29:9123`
+	`SRV-A (ss)`
+	`Local Address:Port Peer Address:Port`
+	`190.50.10.63:80 205.20.0.29:25192`
+	`190.50.10.63:25 205.20.0.29:41823`
+	`SRV-B (ss)`
+	`Local Address:Port Peer Address:Port`
+	`190.50.10.81:8080 205.20.0.29:16345`
+	`190.50.10.81:8081 205.20.0.29:51091`
+	`190.50.10.81:8080 205.20.0.29:9123`
+	2) Hay establecidas en total 5 conexiones:
+		1) PC-A -> SRV-A: 2 Conexiones (puertso 80 y 25)
+		2) PC-A -> SRV-B: 1 Conexión 
+		3) PC-B -> SRV-B: 2 Conexiones
+	3) Las que iniciaron las conexiones son las PCs, los Servers solo responden ya que están detrás de NAT y no tienen forma de iniciar una conexión hacia ips privadas. No se podría iniciar al revés sin una configuración adicional. El port forwarding es una tecnica NAT en donde se mapea un puerto fijo publico a una IP:puerto privado. Ejemplo: 
+```
+	205.20.0.29: 80 -> 192.168.1.2:80
+```
+
+Con port forwarding los servidores se podrían conectar a las ip privadas.
+12) ![[Pasted image 20260201131644.png]] Usando los bloques:
+```
+226.10.20.128/27
+200.30.55.64/26
+127.0.0.0/24
+192.168.10.0/29
+224.10.0.128/27
+224.10.0.64/26
+192.168.10.0/24
+10.10.10.0/27
+```
+Con las siguientes condiciones:
+- **Red C y Red D deben ser públicas**
+- **Enlaces entre routers → redes privadas**
+- **Desperdiciar la menor cantidad de IPs**
+- **Asignar primero las redes con más hosts**
+- **Las redes deben ser válidas**
+De ese bloque descartamos:
+- 127.0.0.0/24 Ya que es un loopback, no es ruteable
+- 224.10.0.128/27 y 224.10.0.64/26 Por ser multicast, no se pueden asignar a hosts
+Si clasificamos los restantes:
+- Redes publicas (no RFC1918): 226.10.20.128/27 y 200.30.55.64/26
+- Redes privadas (RFC1918): 192.168.10.0/24 ; 192.168.10.0/29 ; 10.10.10.0/27
+Asignaciones de las Redes C y D: La red C necesita 14 hosts mientras que la D 16. Estas deben ser publicas:
+- /26 -> 62 hosts útiles -> Asigno red con mas hosts
+- /27 -> 30 hosts útiles -> Asigno red con menos hosts
+- Red C -> 200.30.55.64/26
+- Red D -> 226.10.20.128/27
+Enlaces entre routers (privadas): Aqui no se necesitan muchas IPs, la mejor opciones es usar la 192.168.10.0/29 la cual tiene 6 hosts útiles
+Redes internas restantes: Quedan dos bloques privados:
+- 192.168.10.0/24 -> red grande
+- 10.10.10.0/27 -> red chicca
+Siguiendo la regla de asignar primero la mas grande:
+- 192.168.10.0 -> Red A
+- 
