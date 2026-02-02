@@ -173,15 +173,27 @@ De ese bloque descartamos:
 Si clasificamos los restantes:
 - Redes publicas (no RFC1918): 226.10.20.128/27 y 200.30.55.64/26
 - Redes privadas (RFC1918): 192.168.10.0/24 ; 192.168.10.0/29 ; 10.10.10.0/27
-Asignaciones de las Redes C y D: La red C necesita 14 hosts mientras que la D 16. Estas deben ser publicas:
-- /26 -> 62 hosts útiles -> Asigno red con mas hosts
-- /27 -> 30 hosts útiles -> Asigno red con menos hosts
-- Red C -> 200.30.55.64/26
-- Red D -> 226.10.20.128/27
-Enlaces entre routers (privadas): Aqui no se necesitan muchas IPs, la mejor opciones es usar la 192.168.10.0/29 la cual tiene 6 hosts útiles
-Redes internas restantes: Quedan dos bloques privados:
-- 192.168.10.0/24 -> red grande
-- 10.10.10.0/27 -> red chicca
-Siguiendo la regla de asignar primero la mas grande:
-- 192.168.10.0 -> Red A
-- 
+**Red A**: Necesita 100 hosts -> necesita 7 bits que generarían 128 hosts. Se utilizara 192.168.10.0/24:
+192.168.10. 00000000
+255.255.255. 00000000 Mascara de red
+255.255.255. 1 000000 Mascara de subred
+Queda un bit para ser usado en subredes
+192.168.10.00000000/25 - 192.168.10.0/25 Asignado a la red A, 192.168.10.128/25 libre para hacer subnetting.
+**Red B**: necesita 70 hosts -> 7 bits que generarían 128 host, uso la subred de 192.168.10.128/25 que me quedo libre
+**Red D**: Necesita 16 hosts -> necesita 5 bits que generarían 32 hosts y que la red sea publica, la unica que puedo utilizar es la 200.30.55.64/26
+200.30.55.01000000
+255.255.255.11000000 Mascara de red
+255.255.255.11100000 Mascara de subres
+queda 1 bit para ser usado en subredes. 200.30.55.01000000/27 - 200.30.55.64/27 Asignado a la red D; 200.30.55.01100000/27 libres para seguir haciendo subnetting
+**Red C**: necesita 14 hosts -> 4 bits que generarían 16 -> seguir subnettinando 200.30.55.96/27
+200.30.55.011000000
+255.255.255.11100000 Mascara de red
+255.255.255.11110000 Mascara de subred
+Queda 1 bit para ser usado en subredes
+200.30.55.01100000/28 - 200.30.55.96/28 Asignado a la red C
+200.30.55.01110000/28 - 200.30.55.112/28 Libre para seguir haciendo subnetting
+**Router D - Router C**: necesitan 4 hosts por lo que necesitan 3 bits que generarian 6 hosts -> uso 10.10.10.0/27
+10.10.10.00000000
+255.255.255.11100000 (/27)
+255.255.255.11111000 (/29)
+Asigno de los routers D y C 10.10.10.0/29

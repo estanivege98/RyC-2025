@@ -48,9 +48,23 @@
               "icon": "lucide-file",
               "title": "Practica 8"
             }
+          },
+          {
+            "id": "5472255f27500708",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "Practica 9.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Practica 9"
+            }
           }
         ],
-        "currentTab": 2
+        "currentTab": 3
       }
     ],
     "direction": "vertical"
@@ -223,8 +237,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "90f8c593cd52ecb6",
+  "active": "5472255f27500708",
   "lastOpenFiles": [
+    "Practica 8.md",
+    "Practica 9.md",
     "Pasted image 20260201131644.png",
     "Pasted image 20260201125034.png",
     "Pasted image 20260201122816.png",
@@ -232,14 +248,12 @@
     "Pasted image 20260201121756.png",
     "Pasted image 20260201121659.png",
     "Practica 7.md",
-    "Practica 8.md",
     "Untitled",
     "Pasted image 20260128210538.png",
     "Practica 6.md",
     "Pasted image 20260124181500.png",
     "Pasted image 20260124181402.png",
     "Pasted image 20260124181337.png",
-    "Pasted image 20260124181310.png",
     "Practica 5.md",
     "Untitled.base",
     "README.md",
