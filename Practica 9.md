@@ -38,4 +38,15 @@
 	3) Si detecta una colisión mientras transmite, se detiene, envía una señal de refuerzo, espera un tiempo aleatorio y vuelve a intentar la transmisión.
 	¿Es orientado a conexión? -> No, Ethernet no es orientado a la conexión. Ethernet es un protocolo "Connectionless" (sin conexión) y de "Best Effort" (mejor esfuerzo).
 6) La finalidad del Protocolo de Resolución de Direcciones (ARP - Address Resolution Protocol) es servir como un "puente" o traductor entre la capa de red (capa 3) y la capa de enlace (capa 2). Su función específica es descubrir la dirección MAC (física) de un host cuando solo se conoce su dirección IP (lógica) dentro de una misma red local. **¿Por qué es necesario?** Para que un dispositivo pueda enviar una trama Ethernet a otro, necesita conocer la MAC de destino. Si el dispositivo emisor sabe que el destino está en su misma red (porque comparó las IPs y máscaras), pero no tiene la MAC en su memoria, debe usar ARP para obtenerla. Sin ARP, la comunicación en redes Ethernet sería imposible porque las tramas quedarían incompletas.
-7) 
+7) ![[Pasted image 20260202191723.png]] Dado el siguiente esquema de red
+	1) Estacion 2, Servidor 1, Estacion 4, Estación 5
+	2) Estación 2, Estacion 3, Servidor 1, Estacion 4, Estacion 5, Estacion 11
+	3) Estacion 2, Estacion 3, Servidor 1, Estacion 4, Estacion 5, Estacion 10, Estacion 9, Estacion 8
+	4) Todos
+	5) Estacion 7
+	6) Estacion 10, Estacion 9 y 8
+	7) Se pueden producir donde hay HUBs
+8) .
+	1) 5 -> Segundo puerto del switch 1 es todo un dominio donde hay un hub. También cuenta entre el switch 1 y 2 
+	2) 1
+	3) 
