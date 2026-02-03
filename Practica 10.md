@@ -1,0 +1,5 @@
+1) El IPv6 el la version mas nueva del protocol IP. Esta proporciona mayor espacio de direcciones (128 bits), un formato de cabecera simplificado y menor overhead de procesamiento. Es necesaria su implementacion para solucionar las limitaciones(en cuanto a direcciones IP) que traía IPv4. Garantiza que haya suficientes direcciones IP únicas para todos los dispositivos. Ademas, IPv6 proporciona mejoras en seguridad y eficiencia en comparación com IPv4.
+2) Porque en IPv4 había un campo opcional cuyo tamaño podía variar, haciendo que varia la longitud del encabezado. En IPv6 todos los campos tienen un tamaño fijo, haciendo que el encabezado tenga una longitud constante.
+3) El checksum se utiliza para verificar que no haya corrupciones en el paquete IP. En IPv6, el campo de checksum es eliminado para simplificar el procesamiento de los paquetes en los routers y dispositivos, dejando esta verificación a las capas superiores (TCP y UDP). En cuanto a estas, su obligatoriedad no ha cambiado.
+4) ñ
+5) Se implementaría como una extension del encabezado.
